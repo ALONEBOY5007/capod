@@ -37,6 +37,9 @@ class BleScanner @Inject constructor(
         disableDirectScanCallback: Boolean = false,
     ): Flow<Collection<BleScanResult>> = callbackFlow {
         log(TAG) { "scan(filters=$filters, scannerMode=$scannerMode)" }
+        log(TAG, VERBOSE) { "disableOffloadFiltering=$disableOffloadFiltering" }
+        log(TAG, VERBOSE) { "disableOffloadBatching=$disableOffloadBatching" }
+        log(TAG, VERBOSE) { "disableDirectScanCallback=$disableDirectScanCallback" }
 
         val adapter = bluetoothManager.adapter ?: throw IllegalStateException("Bluetooth adapter unavailable")
 
@@ -134,11 +137,13 @@ class BleScanner @Inject constructor(
                     setMatchMode(ScanSettings.MATCH_MODE_STICKY)
                     setNumOfMatches(ScanSettings.MATCH_NUM_FEW_ADVERTISEMENT)
                 }
+
                 ScannerMode.BALANCED -> {
                     setScanMode(ScanSettings.SCAN_MODE_BALANCED)
                     setMatchMode(ScanSettings.MATCH_MODE_STICKY)
                     setNumOfMatches(ScanSettings.MATCH_NUM_FEW_ADVERTISEMENT)
                 }
+
                 ScannerMode.LOW_LATENCY -> {
                     setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                     setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)

@@ -22,7 +22,14 @@ import eu.darken.capod.pods.core.PodFactory
 import eu.darken.capod.pods.core.apple.protocol.ProximityPairing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Duration
@@ -88,8 +95,8 @@ class PodMonitor @Inject constructor(
     private data class ScannerOptions(
         val scannerMode: ScannerMode,
         val showUnfiltered: Boolean,
-        val offloadedFilteringDisabled: Boolean,
         val offloadedBatchingDisabled: Boolean,
+        val offloadedFilteringDisabled: Boolean,
         val disableDirectCallback: Boolean,
     )
 
@@ -109,8 +116,8 @@ class PodMonitor @Inject constructor(
         ScannerOptions(
             scannerMode = scannermode,
             showUnfiltered = showUnfiltered,
-            offloadedFilteringDisabled = isOffloadedFilteringDisabled,
             offloadedBatchingDisabled = isOffloadedBatchingDisabled,
+            offloadedFilteringDisabled = isOffloadedFilteringDisabled,
             disableDirectCallback = useIndirectScanResultCallback,
         )
     }
